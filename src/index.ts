@@ -2,7 +2,15 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.get('/', async (c) => {
+async function authMiddleware(c : any , next : any){
+  if(c.req.header("Authorization")){
+    await next()
+  }else{
+    return c.text("Authorisation failed")
+  }
+}
+
+app.post('/',authMiddleware, async (c) => {
   const body = await c.req.json()
   console.log(body);
   console.log(c.req.header("Authorization"));
